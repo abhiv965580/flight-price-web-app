@@ -17,7 +17,7 @@ app.get("/airlinesCodes", async (req, res) => {
         airlineCodes: iataCode,
       });
       console.log(response.data[0].businessName);
-      return response.data[0].businessName;
+      return res.json(response.data[0].businessName);
     } catch (error) {
       console.error(error);
       return null;
