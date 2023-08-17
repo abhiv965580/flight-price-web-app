@@ -11,7 +11,25 @@ const amadeus = new Amadeus({
   clientSecret: "z63GADK8TGatNi9t",
 });
 
-app.use(cors({ origin: 'http://localhost:3000' }));
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function getAirlineNames(iataCodes) {
+  try {
+    const response = await amadeus.referenceData.airlines.get({
+      airlineCodes: iataCodes,
+    });
+    const airlineNames = {};
+    response.data.forEach((airline) => {
+      airlineNames[airline.iataCode] = airline.businessName;
+    });
+    return airlineNames;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
 
 app.get("/airlinesCodes", async (req, res) => {
   const { iataCode } = req.query;
@@ -19,7 +37,6 @@ app.get("/airlinesCodes", async (req, res) => {
     const response = await amadeus.referenceData.airlines.get({
       airlineCodes: iataCode,
     });
-    console.log(response.data);
     return res.json(response.data);
   } catch (error) {
     console.error(error);
@@ -37,15 +54,18 @@ app.get("/prices", async (req, res) => {
       adults: 1,
       currencyCode: "INR",
     });
+    const airlineCodes = response.data.map((offer) => offer.validatingAirlineCodes[0]);
+    const uniqueAirlineCodes = [...new Set(airlineCodes)];
+    await sleep(1000);
+    const airlineNames = await getAirlineNames(uniqueAirlineCodes.join(","));
     const prices = {};
     response.data.forEach((offer) => {
       const airlineCode = offer.validatingAirlineCodes[0];
-      console.log(airlineCode);
-      if (!prices[airlineCode]) {
-        prices[airlineCode] = offer.price.total;
+      const airlineName = airlineNames[airlineCode] || airlineCode;
+      if (!prices[airlineName]) {
+        prices[airlineName] = offer.price.total;
       }
     });
-    console.log(prices);
     res.json(prices);
   } catch (error) {
     console.error(error);
