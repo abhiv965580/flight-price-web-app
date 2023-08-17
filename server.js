@@ -1,15 +1,16 @@
 const express = require("express");
 const Amadeus = require("amadeus");
-const cors = require('cors');
+const cors = require("cors");
 
 const app = express();
 const port = 8080;
 
-// Replace these values with your Amadeus API credentials
 const amadeus = new Amadeus({
   clientId: "xoj5UMUzwVDMs7c7OS8dvHGQGf0BqSXo",
   clientSecret: "z63GADK8TGatNi9t",
 });
+
+app.use(cors({ origin: "http://localhost:3000" }));
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -54,7 +55,9 @@ app.get("/prices", async (req, res) => {
       adults: 1,
       currencyCode: "INR",
     });
-    const airlineCodes = response.data.map((offer) => offer.validatingAirlineCodes[0]);
+    const airlineCodes = response.data.map(
+      (offer) => offer.validatingAirlineCodes[0]
+    );
     const uniqueAirlineCodes = [...new Set(airlineCodes)];
     await sleep(1000);
     const airlineNames = await getAirlineNames(uniqueAirlineCodes.join(","));
