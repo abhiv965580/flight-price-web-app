@@ -2,7 +2,7 @@ const express = require("express");
 const Amadeus = require("amadeus");
 
 const app = express();
-const port = 3000;
+const port = 8080;
 
 // Replace these values with your Amadeus API credentials
 const amadeus = new Amadeus({
@@ -11,20 +11,20 @@ const amadeus = new Amadeus({
 });
 
 app.get("/airlinesCodes", async (req, res) => {
-    const { iataCode } = req.query;
-    try {
-      const response = await amadeus.referenceData.airlines.get({
-        airlineCodes: iataCode,
-      });
-      console.log(response.data[0].businessName);
-      return res.json(response.data[0].businessName);
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
+  const { iataCode } = req.query;
+  try {
+    const response = await amadeus.referenceData.airlines.get({
+      airlineCodes: iataCode,
+    });
+    console.log(response.data[0].businessName);
+    return res.json(response.data[0].businessName);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 });
 
-app.get("/prices", async (req, res) =>  {
+app.get("/prices", async (req, res) => {
   const { source, destination, departureDate } = req.query;
   try {
     const response = await amadeus.shopping.flightOffersSearch.get({
@@ -51,7 +51,6 @@ app.get("/prices", async (req, res) =>  {
       .json({ error: "An error occurred while fetching flight prices" });
   }
 });
-
 
 app.listen(port, () => {
   console.log(`Flight web app listening at http://localhost:${port}`);
