@@ -19,8 +19,8 @@ app.get("/airlinesCodes", async (req, res) => {
     const response = await amadeus.referenceData.airlines.get({
       airlineCodes: iataCode,
     });
-    console.log(response.data[0].businessName);
-    return res.json(response.data[0].businessName);
+    console.log(response.data);
+    return res.json(response.data);
   } catch (error) {
     console.error(error);
     return null;
