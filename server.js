@@ -10,6 +10,8 @@ const amadeus = new Amadeus({
   clientSecret: "z63GADK8TGatNi9t",
 });
 
+app.use(cors({ origin: 'http://localhost:3000' }));
+
 app.get("/airlinesCodes", async (req, res) => {
   const { iataCode } = req.query;
   try {
