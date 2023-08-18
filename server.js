@@ -10,7 +10,7 @@ const amadeus = new Amadeus({
   clientSecret: "z63GADK8TGatNi9t",
 });
 
-app.use(cors({ origin: "https://flight-price-frontend.vercel.app/" }));
+app.use(cors({ origin: "https://flight-price-frontend.vercel.app" }));
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
