@@ -32,13 +32,15 @@ async function getAirlineNames(iataCodes) {
   }
 }
 
-app.get("/airlinesCodes", async (req, res) => {
-  const { iataCode } = req.query;
+app.get("/airportCode",async (req, res) => {
+  const { cityName } = req.query;
   try {
-    const response = await amadeus.referenceData.airlines.get({
-      airlineCodes: iataCode,
+    const response = await amadeus.referenceData.locations.get({
+      keyword: cityName,
+      subType: 'AIRPORT,CITY',
     });
-    return res.json(response.data);
+    let airportCode = response.data[0].iataCode;
+    res.json(airportCode);
   } catch (error) {
     console.error(error);
     return null;
